@@ -8,11 +8,8 @@ on:
 
 jobs:
   build:
+    name: Build Debug APK
     runs-on: ubuntu-latest
-
-    defaults:
-      run:
-        working-directory: RH-Daily
 
     steps:
       - name: Checkout repository
@@ -27,14 +24,16 @@ jobs:
       - name: Set up Android SDK
         uses: android-actions/setup-android@v3
 
-      - name: Install Android SDK 35
+      - name: Install Android SDK
         run: |
           sdkmanager "platforms;android-35" "build-tools;35.0.0"
 
       - name: Grant execute permission
+        working-directory: RH-Daily
         run: chmod +x gradlew
 
-      - name: Build Debug APK
+      - name: Build APK
+        working-directory: RH-Daily
         run: ./gradlew assembleDebug --stacktrace
 
       - name: Upload APK
