@@ -1,0 +1,25 @@
+#!/bin/sh
+set -eu
+
+APP_HOME=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
+JAR="$APP_HOME/gradle/wrapper/gradle-wrapper.jar"
+WRAPPER_URL="https://raw.githubusercontent.com/gradle/gradle/v8.9.0/gradle/wrapper/gradle-wrapper.jar"
+
+if [ ! -f "$JAR" ]; then
+  mkdir -p "$(dirname "$JAR")"
+  if command -v curl >/dev/null 2>&1; then
+    curl -fsSL "$WRAPPER_URL" -o "$JAR" || rm -f "$JAR"
+  fi
+fi
+
+if [ -f "$JAR" ]; then
+  exec java -classpath "$JAR" org.gradle.wrapper.GradleWrapperMain "$@"
+fi
+
+if command -v gradle >/dev/null 2>&1; then
+  exec gradle "$@"
+fi
+
+echo "Gradle wrapper JAR is missing and no system Gradle was found." >&2
+echo "Open the project in Android Studio with internet access, or install Gradle 8.9." >&2
+exit 1
