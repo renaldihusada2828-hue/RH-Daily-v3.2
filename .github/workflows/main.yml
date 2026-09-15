@@ -24,11 +24,15 @@ jobs:
       - name: Set up Android SDK
         uses: android-actions/setup-android@v4
         with:
-          packages: |
-            platform-tools
-            platforms;android-35
-            build-tools;35.0.0
-          accept-android-sdk-licenses: true
+          packages: ''
+
+      - name: Install Android SDK packages
+        run: |
+          yes | sdkmanager --licenses || true
+          sdkmanager --install \
+            "platform-tools" \
+            "platforms;android-35" \
+            "build-tools;35.0.0"
 
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v4
@@ -36,6 +40,13 @@ jobs:
       - name: Grant execute permission
         working-directory: RH-Daily
         run: chmod +x gradlew
+
+      - name: Show tool versions
+        working-directory: RH-Daily
+        run: |
+          java -version
+          sdkmanager --version
+          ./gradlew --version
 
       - name: Build Debug APK
         working-directory: RH-Daily
